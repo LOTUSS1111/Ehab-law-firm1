@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليلك الشامل للمواعيد القضائية</title>
+    
+    <!-- أكواد تحويل الموقع لتطبيق موبايل -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#152238">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/6062/6062646.png">
+
+    <style>
+        :root { --bg-color: #F8F6F0; --bg-gradient: #EAE6D8; --primary-navy: #152238; --secondary-navy: #23395D; --accent-gold: #a67c00; --text-light: #F8F6F0; --shadow: rgba(21, 34, 56, 0.15); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, var(--bg-color), var(--bg-gradient)); background-size: 200% 200%; color: var(--primary-navy); min-height: 100vh; }
+        
+        #login-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .login-box { background: rgba(255, 255, 255, 0.9); padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px var(--shadow); max-width: 400px; width: 100%; text-align: center; border-top: 5px solid var(--primary-navy); }
+        .login-box h1 { margin-bottom: 5px; font-size: 24px; color: var(--primary-navy); }
+        .login-box h2 { margin-bottom: 25px; font-size: 15px; color: var(--accent-gold); }
+        .pin-input { width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 10px; border: 2px solid var(--primary-navy); border-radius: 8px; margin-bottom: 20px; outline: none; }
+        .pin-input:focus { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(166, 124, 0, 0.3); }
+
+        #app-container { display: none; }
+        #navbar { background: rgba(255, 255, 255, 0.95); padding: 15px 20px; box-shadow: 0 2px 10px var(--shadow); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 900; }
+        #sidebar { width: 260px; background: var(--primary-navy); color: var(--text-light); height: 100vh; position: fixed; right: 0; top: 0; padding-top: 20px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; overflow-y: auto; }
+        .sidebar-header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+        .sidebar-header h3 { background: var(--accent-gold); color: #fff; padding: 5px; border-radius: 5px; font-size: 14px; margin-top: 10px; display: inline-block; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; font-size: 15px; }
+        .sidebar-menu li:hover, .sidebar-menu li.active { background: var(--secondary-navy); border-right: 5px solid var(--accent-gold); padding-right: 20px; font-weight: bold; }
+        
+        #main-content { margin-right: 260px; padding: 30px; transition: 0.3s; }
+        
+        .form-card { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; box-shadow: 0 8px 20px var(--shadow); border-top: 5px solid var(--primary-navy); display: none; animation: fadeIn 0.4s ease; }
+        .form-card.active { display: block; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .form-card h3 { color: var(--primary-navy); font-size: 20px; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary-navy); font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; outline: none; font-size: 15px; background: #fdfdfd; }
+        .multi-select-box { max-height: 180px; overflow-y: auto; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px; background: #fdfdfd; }
+        .checkbox-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+
+        .btn-primary { width: 100%; padding: 14px; background: var(--primary-navy); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-primary:hover { background: var(--secondary-navy); transform: translateY(-2px); }
+        .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+        
+        .btn-pdf-print { background: #cb2027; color: white; padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; width: 100%; display: block; text-align: center; margin-top: 10px;}
+        .btn-action-call { background: #152238; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none; font-size: 13px; font-weight: bold; }
+        .btn-action-wa { background: #25D366; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none; font-size: 13px; font-weight: bold; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .dash-box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px var(--shadow); border-right: 4px solid var(--primary-navy); }
+        .dash-box h4 { background: var(--primary-navy); color: white; display: inline-block; padding: 5px 15px; border-radius: 5px; margin-bottom: 15px; font-size: 14px; }
+        
+        .client-info-item { border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 10px; }
+        
+        .directory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .dir-card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 4px solid var(--accent-gold); }
+        .dir-card h4 { color: var(--primary-navy); font-size: 18px; margin-bottom: 10px; }
+        .dir-card p { font-size: 14px; margin-bottom: 5px; color: #444; }
+        .dir-actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 15px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+        #toast.success { background-color: #10b981; } 
+        #toast.error { background-color: #ef4444; } 
+
+        @media (max-width: 768px) { #sidebar { transform: translateX(100%); } #sidebar.open { transform: translateX(0); box-shadow: -5px 0 20px rgba(0,0,0,0.2); } #main-content { margin-right: 0; padding: 15px; } #menu-btn { display: block !important; background: none; border: none; font-size: 26px; color: var(--primary-navy); cursor: pointer;} .dashboard-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h1>دليلك الشامل</h1>
+            <h2>مكتب الأستاذ/ إيهاب شفيق المحامي</h2>
+            <input type="password" id="pin-input" class="pin-input" placeholder="الرمز السري">
+            <button class="btn-primary" onclick="checkLogin()">تسجيل الدخول</button>
+            <p id="login-error" style="color: #ef4444; margin-top: 15px; display: none; font-weight: bold;">الرمز السري غير صحيح!</p>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>دليلك الشامل</h2>
+                <h3>أ/ إيهاب شفيق</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" onclick="showSection('section-search', this)">🔍 دوسيه القضية (بحث)</li>
+                <li onclick="showSection('section-directory', this)">📂 دليل الموكلين الشامل</li>
+                <li onclick="showSection('section-profits', this)">📊 داش بورد الأرباح العام</li>
+                <li onclick="showSection('section-client', this)">👥 إضافة موكل جديد</li>
+                <li onclick="showSection('section-case', this)">⚖️ إضافة قضية جديدة</li>
+                <li onclick="showSection('section-session', this)">📅 تسجيل جلسة ومواعيد طعون</li>
+                <li onclick="showSection('section-financials', this)">💰 الخزينة (دفعات ومصروفات)</li>
+                <li onclick="showSection('section-resources', this)">📄 الصيغ والروابط</li>
+            </ul>
+        </nav>
+
+        <div id="main-content">
+            <header id="navbar">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <button id="menu-btn" style="display: none;" onclick="toggleSidebar()">☰</button>
+                    <h2 style="font-size: 18px; color: var(--primary-navy); font-weight: bold;">مكتب المحاماة</h2>
+                </div>
+                <div id="live-date" style="font-size: 13px; font-weight: bold; color: var(--secondary-navy); background: #f3f4f6; padding: 5px 12px; border-radius: 20px;"></div>
+            </header>
+
+            <!-- البحث الشامل للقضايا -->
+            <div id="section-search" class="form-card active">
+                <h3>🔍 البحث برقم القضية</h3>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="search-input" placeholder="مثال: 145/2026..." style="flex:1; padding:12px; border-radius:8px; border:1px solid #d1d5db; outline:none; font-size:16px;">
+                    <button id="btn-search" onclick="performSearch()" style="padding: 12px 25px; background: var(--primary-navy); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight:bold;">بحث</button>
+                </div>
+                
+                <div id="case-dashboard" style="display: none; margin-top: 30px;">
+                    <button class="btn-pdf-print" onclick="printCasePDF()">🖨️ طباعة وتحميل ملف القضية كـ PDF</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+                        <h2 id="d-caseNum" style="color: var(--primary-navy);"></h2>
+                        <span id="d-status" style="background: #e8f5e9; color: #059669; padding: 8px 15px; border-radius: 20px; font-size: 13px; font-weight: bold;"></span>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="dash-box"><h4>👥 أطراف القضية (الموكلين)</h4><div id="d-clientsList"></div><p style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;"><strong>المحكمة:</strong> <span id="d-court"></span></p></div>
+                        <div class="dash-box"><h4>💰 الموقف المالي للقضية</h4><p><strong>إجمالي الأتعاب:</strong> <span id="d-agreed"></span></p><p style="color: #059669;"><strong>ما تم تحصيله:</strong> <span id="d-paid"></span></p><p style="color: #ef4444;"><strong>المتبقي على الموكل:</strong> <span id="d-rem-client"></span></p><hr style="margin:10px 0; border:0; border-top:1px solid #eee;"><p style="color: #b91c1c;"><strong>إجمالي المصروفات:</strong> <span id="d-expenses"></span></p><p style="color: var(--primary-navy); font-weight: bold; font-size: 18px; margin-top:5px;"><strong>صافي الربح:</strong> <span id="d-net"></span></p></div>
+                    </div>
+                    <div class="dash-box" style="margin-top: 20px;"><h4>📅 تفاصيل الجلسات والقرارات</h4><div id="d-sessions-list"></div></div>
+                    <div class="dash-box" style="margin-top: 20px;"><h4>💸 دفتر الخزينة</h4><div id="d-transactions-list"></div></div>
+                </div>
+            </div>
+
+            <!-- دليل الموكلين الشامل -->
+            <div id="section-directory" class="form-card">
+                <h3>📂 سجل ودليل الموكلين الشامل</h3>
+                <input type="text" id="dir-search-input" placeholder="ابحث بالاسم، أو رقم الهاتف، أو رقم التوكيل..." onkeyup="filterDirectory()" style="width:100%; padding:12px; border-radius:8px; border:1px solid #d1d5db; font-size:16px; margin-bottom: 20px;">
+                <div id="directory-loading" style="text-align: center; color: var(--primary-navy); font-weight: bold;">جاري جلب بيانات الموكلين...</div>
+                <div id="directory-container" class="directory-grid"></div>
+            </div>
+
+            <!-- داش بورد الأرباح -->
+            <div id="section-profits" class="form-card">
+                <h3>📊 الموقف المالي العام للمكتب</h3>
+                <button id="btn-refresh-profits" class="btn-primary" onclick="loadProfits()">🔄 تحديث الأرقام</button>
+                <div id="profits-container" class="dashboard-grid" style="display:none; margin-top: 25px;">
+                    <div class="dash-box" style="text-align: center;"><h4>الأتعاب المتفق عليها</h4><h2 id="p-agreed" style="color: var(--primary-navy);">0</h2></div>
+                    <div class="dash-box" style="text-align: center;"><h4>إجمالي المحصل نقداً</h4><h2 id="p-collected" style="color: #059669;">0</h2></div>
+                    <div class="dash-box" style="text-align: center;"><h4>إجمالي المصروفات</h4><h2 id="p-expenses" style="color: #ef4444;">0</h2></div>
+                    <div class="dash-box" style="text-align: center; border: 2px solid var(--accent-gold); background: #fdfaf2;"><h4>الصافي المتوقع (بعد التحصيل)</h4><h2 id="p-net" style="color: var(--accent-gold);">0</h2></div>
+                </div>
+            </div>
+
+            <!-- إضافة موكل -->
+            <div id="section-client" class="form-card">
+                <h3>+ تسجيل موكل جديد</h3>
+                <form id="addClientForm">
+                    <div class="form-group"><label>اسم الموكل</label><input type="text" id="c-name" required></div>
+                    <div class="form-group"><label>رقم التوكيل</label><input type="text" id="c-poa" placeholder="مثال: 1234 لسنة 2026 رسمي عام" required></div>
+                    <div class="form-group"><label>رقم الهاتف</label><input type="text" id="c-phone" required></div>
+                    <div class="form-group"><label>الرقم القومي (اختياري)</label><input type="text" id="c-nationalId"></div>
+                    <div class="form-group"><label>العنوان (اختياري)</label><input type="text" id="c-address"></div>
+                    <div class="form-group"><label>ملاحظات (اختياري)</label><textarea id="c-notes" rows="2"></textarea></div>
+                    <button type="button" id="btn-client" class="btn-primary" onclick="submitClient()">💾 حفظ الموكل</button>
+                </form>
+            </div>
+
+            <!-- إضافة قضية -->
+            <div id="section-case" class="form-card">
+                 <h3>+ تسجيل قضية جديدة</h3>
+                 <form id="addCaseForm">
+                     <div class="form-group"><label>رقم القضية والسنة (مثال: 145/2026)</label><input type="text" id="case-num" required></div>
+                     <div class="form-group"><label>أطراف القضية من الموكلين (اختر واحد أو أكثر)</label><div id="case-clients-checkboxes" class="multi-select-box">جاري تحميل الموكلين...</div></div>
+                     <div class="form-group"><label>صفة الموكلين</label><select id="case-role"><option>مدعي / مدعين</option><option>مدعى عليه / مدعى عليهم</option><option>مستأنف</option><option>مستأنف ضده</option></select></div>
+                     <div class="form-group"><label>الخصوم</label><input type="text" id="case-opponents"></div>
+                     <div class="form-group"><label>المحكمة والدائرة</label><input type="text" id="case-court"></div>
+                     <div class="form-group"><label>حالة القضية</label><select id="case-status"><option>متداولة</option><option>محجوزة للحكم</option><option>منتهية</option></select></div>
+                     <button type="button" id="btn-case" class="btn-primary" onclick="submitCase()">💾 حفظ القضية</button>
+                 </form>
+            </div>
+
+            <!-- الجلسات والطعون -->
+            <div id="section-session" class="form-card">
+                 <h3>📅 تسجيل جلسة وإنذارات استئناف</h3>
+                 <form id="addSessionForm">
+                     <div class="form-group"><label>القضية</label><select id="s-caseNum"></select></div>
+                     <div class="form-group"><label>تاريخ الجلسة / القرار</label><input type="date" id="s-date" required></div>
+                     <div class="form-group"><label>القرار / ما تم فيها</label><input type="text" id="s-decision" placeholder="تأجيل / حجز للحكم / إلخ"></div>
+                     <div class="form-group"><label>المطلوب إنجازه</label><input type="text" id="s-required" placeholder="مذكرات، حوافظ..."></div>
+                     
+                     <hr style="margin:20px 0; border:0; border-top:2px solid #eee;">
+                     <h4 style="color:#cb2027; margin-bottom:10px; font-size: 15px;">⚠️ في حالة صدور حكم (لحساب إنذارات الطعن والاستئناف)</h4>
+                     <p style="font-size:13px; color:#666; margin-bottom:15px;">سيقوم البوت بإرسال تذكير يومي في آخر 7 أيام قبل انتهاء المدة.</p>
+                     
+                     <div class="form-group"><label>تاريخ صدور الحكم</label><input type="date" id="s-judgmentDate"></div>
+                     <div class="form-group"><label>المدة القانونية المتاحة للطعن (بالأيام)</label><input type="number" id="s-gracePeriod" placeholder="مثال: 40 أو 60 يوم"></div>
+
+                     <button type="button" id="btn-session" class="btn-primary" onclick="submitSession()">💾 حفظ الجلسة والمواعيد</button>
+                 </form>
+            </div>
+
+            <!-- الخزينة -->
+            <div id="section-financials" class="form-card">
+                <h3>💰 تسجيل حركة الخزينة (دفعات أو مصروفات)</h3>
+                <form id="addFinForm">
+                    <div class="form-group"><label>القضية</label><select id="f-caseNum"></select></div>
+                    <div class="form-group"><label>التاريخ</label><input type="date" id="f-date" required></div>
+                    <div class="form-group"><label>نوع الحركة</label><select id="f-type"><option value="أتعاب متفق عليها">أتعاب متفق عليها (إجمالي)</option><option value="دفعة مستلمة">دفعة مستلمة من الموكل</option><option value="مصروفات">مصروفات (ورق، دمغات، رسوم)</option></select></div>
+                    <div class="form-group"><label>المبلغ (ج.م)</label><input type="number" id="f-amount" placeholder="0" required></div>
+                    <div class="form-group"><label>البيان / الملاحظات</label><input type="text" id="f-notes" placeholder="تفاصيل الدفعة أو المصروف"></div>
+                    <button type="button" id="btn-fin" class="btn-primary" onclick="submitTreasury()">💾 حفظ الحركة المالية</button>
+                </form>
+            </div>
+
+            <div id="section-resources" class="form-card">
+                <h3>📄 الصيغ القانونية والروابط</h3>
+                <div id="resources-container" style="line-height: 1.8;">جاري تحميل المراجع...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // -------------------------------------------------------------
+        const API_URL = "https://script.google.com/macros/s/AKfycbyhI-Y68WNi9Q23QcRxii_WuOF6lh5wD8ToLILWu8mCSC3VWlV9gBl-Tq775DR66RRTCg/exec"; 
+        // -------------------------------------------------------------
+
+        let currentCaseData = null;
+        let globalDirectoryData = [];
+
+        function checkLogin() {
+            if (document.getElementById('pin-input').value === '5050') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                document.getElementById('live-date').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            } else { document.getElementById('login-error').style.display = 'block'; }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = message; toast.className = 'show ' + type;
+            setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 3000);
+        }
+
+        function formatMoney(num) { return Number(num).toLocaleString('en-US') + ' ج.م'; }
+
+        async function callAPI(action, payload = null) {
+            let response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, data: payload }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+            let result = await response.json();
+            if(result.status === 'success') return result.data; else throw new Error(result.message);
+        }
+
+        function showSection(sectionId, element) {
+            document.querySelectorAll('.form-card').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+
+            if(sectionId === 'section-case') loadCheckboxes('case-clients-checkboxes', 'getClientsList');
+            if(sectionId === 'section-session' || sectionId === 'section-financials') loadDropdown(sectionId==='section-session'?'s-caseNum':'f-caseNum', 'getCasesList');
+            if(sectionId === 'section-profits') loadProfits();
+            if(sectionId === 'section-directory') loadDirectory();
+            if(sectionId === 'section-resources') loadResources();
+
+            if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        async function loadDropdown(elementId, actionName) {
+            let select = document.getElementById(elementId); select.innerHTML = '<option value="">جاري التحميل...</option>';
+            try {
+                let list = await callAPI(actionName);
+                select.innerHTML = '<option value="">-- اختر --</option>';
+                list.forEach(item => { let opt = document.createElement('option'); opt.value = item.code || item.caseNum; opt.text = item.name ? item.name : "قضية: " + item.caseNum; select.appendChild(opt); });
+            } catch (e) { select.innerHTML = '<option value="">خطأ في التحميل</option>'; }
+        }
+
+        async function loadCheckboxes(elementId, actionName) {
+            let container = document.getElementById(elementId); container.innerHTML = 'جاري التحميل...';
+            try {
+                let list = await callAPI(actionName);
+                container.innerHTML = '';
+                list.forEach(item => {
+                    let div = document.createElement('div'); div.className = 'checkbox-item';
+                    let chk = document.createElement('input'); chk.type = 'checkbox'; chk.value = item.code; chk.id = 'chk-' + item.code;
+                    let lbl = document.createElement('label'); lbl.htmlFor = 'chk-' + item.code; lbl.innerText = item.name;
+                    div.appendChild(chk); div.appendChild(lbl); container.appendChild(div);
+                });
+            } catch (e) { container.innerHTML = 'خطأ في التحميل.'; }
+        }
+
+        async function submitData(btnId, formId, actionName, dataObj) {
+            var btn = document.getElementById(btnId); const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '⏳ جاري الحفظ...';
+            try {
+                let res = await callAPI(actionName, dataObj);
+                showToast(res, 'success'); document.getElementById(formId).reset();
+            } catch (e) { showToast("فشل الحفظ", 'error'); } finally { btn.disabled = false; btn.innerHTML = originalText; }
+        }
+
+        function submitClient() { submitData('btn-client', 'addClientForm', 'addClient', { name: document.getElementById('c-name').value, poa: document.getElementById('c-poa').value, nationalId: document.getElementById('c-nationalId').value, phone: document.getElementById('c-phone').value, address: document.getElementById('c-address').value, notes: document.getElementById('c-notes').value }); }
+        function submitCase() { 
+            let selectedClients = [];
+            document.querySelectorAll('#case-clients-checkboxes input[type="checkbox"]:checked').forEach(chk => selectedClients.push(chk.value));
+            if(selectedClients.length === 0) { showToast("برجاء اختيار موكل واحد على الأقل", "error"); return; }
+            submitData('btn-case', 'addCaseForm', 'addCase', { caseNumber: document.getElementById('case-num').value, clientCodes: selectedClients.join(','), clientRole: document.getElementById('case-role').value, opponents: document.getElementById('case-opponents').value, court: document.getElementById('case-court').value, status: document.getElementById('case-status').value }); 
+        }
+        function submitSession() { submitData('btn-session', 'addSessionForm', 'addSession', { caseNum: document.getElementById('s-caseNum').value, sessionDate: document.getElementById('s-date').value, decision: document.getElementById('s-decision').value, requiredAction: document.getElementById('s-required').value, judgmentDate: document.getElementById('s-judgmentDate').value, gracePeriod: document.getElementById('s-gracePeriod').value }); }
+        function submitTreasury() { submitData('btn-fin', 'addFinForm', 'addTreasuryTransaction', { caseNum: document.getElementById('f-caseNum').value, date: document.getElementById('f-date').value, type: document.getElementById('f-type').value, amount: document.getElementById('f-amount').value, notes: document.getElementById('f-notes').value }); }
+
+        async function performSearch() {
+            var query = document.getElementById('search-input').value;
+            var btn = document.getElementById('btn-search');
+            if(!query) { showToast('برجاء كتابة رقم القضية', 'error'); return; }
+            btn.disabled = true; btn.innerText = 'جاري البحث...';
+            document.getElementById('case-dashboard').style.display = 'none';
+
+            try {
+                let res = await callAPI('searchCaseDetails', query);
+                if(res.error) { showToast(res.error, 'error'); btn.disabled=false; btn.innerText='بحث'; return; }
+                currentCaseData = res; 
+                document.getElementById('case-dashboard').style.display = 'block';
+                
+                document.getElementById('d-caseNum').innerText = "قضية رقم: " + res.caseNum;
+                document.getElementById('d-status').innerText = res.status;
+                document.getElementById('d-court').innerText = res.court;
+                
+                let clientsHtml = '';
+                res.clients.forEach(c => {
+                    clientsHtml += `<div class="client-info-item"><strong>الاسم:</strong> ${c.name} (${res.role})<br><strong>الهاتف:</strong> ${c.phone} <a href="https://wa.me/2${c.phone}" target="_blank" style="color:#059669; font-weight:bold; font-size:12px; text-decoration:none;">(واتساب)</a><br><strong>رقم التوكيل:</strong> <span style="font-weight:bold; color:var(--primary-navy);">${c.poa}</span></div>`;
+                });
+                document.getElementById('d-clientsList').innerHTML = clientsHtml;
+                document.getElementById('d-agreed').innerText = formatMoney(res.financials.totalAgreed);
+                document.getElementById('d-paid').innerText = formatMoney(res.financials.totalPaid);
+                document.getElementById('d-rem-client').innerText = formatMoney(res.financials.remainingOnClient);
+                document.getElementById('d-expenses').innerText = formatMoney(res.financials.totalExpenses);
+                document.getElementById('d-net').innerText = formatMoney(res.financials.netProfit);
+
+                document.getElementById('d-sessions-list').innerHTML = res.sessions.map(s => `<div style="border-right:3px solid var(--accent-gold); padding-right:10px; margin-bottom:12px; background:#fdfdfd; padding:12px; border-radius:5px;"><strong>${s.date}</strong><br><span style="font-size:14px; color:#444;">${s.decision}</span></div>`).join('');
+                document.getElementById('d-transactions-list').innerHTML = res.financials.transactions.map(t => `<div class="transaction-item"><div><strong>${t.type}</strong> <span style="color:#888; font-size:12px;">(${t.date})</span><br><span style="font-size:13px; color:#666;">${t.notes}</span></div><div style="font-weight:bold; color:${t.type==='مصروفات'?'#ef4444':'#152238'}">${formatMoney(t.amount)}</div></div>`).join('');
+                showToast('تم جلب تفاصيل القضية', 'success');
+            } catch (e) { showToast("خطأ في الاتصال", 'error'); } finally { btn.disabled = false; btn.innerText = 'بحث'; }
+        }
+
+        async function loadDirectory() {
+            const container = document.getElementById('directory-container');
+            const loading = document.getElementById('directory-loading');
+            container.innerHTML = ''; loading.style.display = 'block';
+            
+            try {
+                globalDirectoryData = await callAPI('getFullDirectory');
+                renderDirectory(globalDirectoryData);
+                loading.style.display = 'none';
+            } catch(e) { loading.innerText = 'فشل تحميل بيانات الموكلين.'; }
+        }
+
+        function renderDirectory(dataArray) {
+            const container = document.getElementById('directory-container');
+            let html = '';
+            dataArray.forEach(client => {
+                let casesHtml = client.cases.length === 0 ? '<span style="color:#ef4444;">لا توجد قضايا مسجلة</span>' : client.cases.map(c => `قضية رقم: <b>${c.caseNum}</b> (${c.status})`).join(' | ');
+                
+                html += `
+                <div class="dir-card">
+                    <h4>👤 ${client.name}</h4>
+                    <p>📱 الهاتف: <b>${client.phone}</b></p>
+                    <p>📜 التوكيل: <b>${client.poa}</b></p>
+                    <p style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">⚖️ القضايا: <br>${casesHtml}</p>
+                    <div class="dir-actions">
+                        <a href="tel:${client.phone}" class="btn-action-call">📞 اتصال</a>
+                        <a href="https://wa.me/2${client.phone}" target="_blank" class="btn-action-wa">💬 واتساب</a>
+                    </div>
+                    <button class="btn-pdf-print" onclick="printClientPDF('${client.code}')">🖨️ تحميل ملف الموكل (PDF)</button>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function filterDirectory() {
+            const query = document.getElementById('dir-search-input').value.toLowerCase();
+            const filtered = globalDirectoryData.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || c.poa.toLowerCase().includes(query));
+            renderDirectory(filtered);
+        }
+
+        function printClientPDF(clientCode) {
+            const client = globalDirectoryData.find(c => c.code === clientCode);
+            if(!client) return;
+            var printWindow = window.open('', '', 'width=800,height=900');
+            var casesTable = client.cases.length === 0 ? "<p>لا توجد قضايا مسجلة لهذا الموكل.</p>" : `<table><tr><th>رقم القضية</th><th>المحكمة</th><th>الصفة</th><th>الحالة</th></tr>` + client.cases.map(c => `<tr><td>${c.caseNum}</td><td>${c.court}</td><td>${c.role}</td><td>${c.status}</td></tr>`).join('') + `</table>`;
+            
+            var html = `<html lang="ar" dir="rtl"><head><title>ملف الموكل: ${client.name}</title><style>body { font-family: Tahoma; padding: 40px; color:#152238;} h1 { text-align: center; border-bottom: 2px solid #C5A059; padding-bottom:10px;} table { width: 100%; border-collapse: collapse; margin-top: 20px; } th, td { border: 1px solid #ddd; padding: 12px; text-align: right; } th { background: #f2f2f2; } .info-box { background:#f9f9f9; padding:20px; border:1px solid #ccc; margin-top:20px; border-radius:5px; line-height: 1.8;}</style></head><body>
+                <h1>مكتب الأستاذ / إيهاب شفيق المحامي</h1><h2 style="text-align:center;">ملف وتقرير الموكل</h2>
+                <div class="info-box">
+                    <p><strong>اسم الموكل:</strong> ${client.name}</p>
+                    <p><strong>رقم التوكيل:</strong> ${client.poa}</p>
+                    <p><strong>الهاتف:</strong> ${client.phone}</p>
+                    <p><strong>الرقم القومي:</strong> ${client.nationalId || 'غير مسجل'}</p>
+                    <p><strong>العنوان:</strong> ${client.address || 'غير مسجل'}</p>
+                </div>
+                <h3 style="margin-top:30px;">القضايا المرتبطة بالموكل:</h3>
+                ${casesTable}
+            </body></html>`;
+            printWindow.document.write(html); printWindow.document.close();
+            setTimeout(function() { printWindow.print(); }, 500);
+        }
+
+        async function loadProfits() {
+            var btn = document.getElementById('btn-refresh-profits'); btn.disabled = true; btn.innerText = 'جاري الحساب...';
+            document.getElementById('profits-container').style.display = 'grid';
+            try {
+                let res = await callAPI('getOfficeProfits');
+                document.getElementById('p-agreed').innerText = formatMoney(res.agreed);
+                document.getElementById('p-collected').innerText = formatMoney(res.collected);
+                document.getElementById('p-expenses').innerText = formatMoney(res.expenses);
+                document.getElementById('p-net').innerText = formatMoney(res.netExpected);
+            } catch(e) {} finally { btn.disabled = false; btn.innerHTML = '🔄 تحديث الأرقام'; }
+        }
+
+        async function loadResources() {
+            let container = document.getElementById('resources-container');
+            try {
+                let res = await callAPI('getResources');
+                let html = "";
+                res.templates.forEach(t => html += `<p style="margin-bottom:10px; padding:10px; background:#f9fafb; border-radius:5px;">📄 <b>${t.name}</b> <a href="${t.word}" target="_blank" style="margin-right:10px; color:var(--primary-navy);">[تحميل]</a></p>`);
+                res.links.forEach(l => html += `<p style="margin-bottom:10px; padding:10px; background:#f9fafb; border-radius:5px;">🔗 <a href="${l.url}" target="_blank" style="color:var(--primary-navy); font-weight:bold;">${l.name}</a></p>`);
+                container.innerHTML = html || "لا توجد مراجع مسجلة.";
+            } catch(e) { container.innerHTML = "فشل التحميل."; }
+        }
+
+        function printCasePDF() {
+            if(!currentCaseData) return;
+            var printWindow = window.open('', '', 'width=800,height=900');
+            var html = `<html lang="ar" dir="rtl"><head><title>ملف قضية رقم ${currentCaseData.caseNum}</title><style>body { font-family: Tahoma, Arial; padding: 40px; color: #152238; } h1 { text-align: center; border-bottom: 2px solid #C5A059; padding-bottom: 10px; } h3 { background: #152238; color: white; padding: 10px; border-radius: 5px; margin-top: 30px;} table { width: 100%; border-collapse: collapse; margin-top: 15px; } th, td { border: 1px solid #ddd; padding: 12px; text-align: right; } th { background: #f2f2f2; } .summary { display: flex; justify-content: space-between; border: 2px solid #152238; padding: 20px; border-radius: 5px; margin-top: 20px;}</style></head><body><h1>مكتب الأستاذ / إيهاب شفيق المحامي</h1><h2 style="text-align:center; color:#555;">تقرير ملف قضية رقم: ${currentCaseData.caseNum}</h2><div class="summary"><div><p><strong>المحكمة:</strong> ${currentCaseData.court}</p><p><strong>حالة القضية:</strong> ${currentCaseData.status}</p></div></div><h3>سجل الجلسات</h3><table><tr><th>التاريخ</th><th>القرار / ما تم فيها</th></tr>${currentCaseData.sessions.map(s => `<tr><td>${s.date}</td><td>${s.decision}</td></tr>`).join('')}</table><h3>سجل الخزينة (الماليات)</h3><table><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>البيان</th></tr>${currentCaseData.financials.transactions.map(t => `<tr><td>${t.date}</td><td>${t.type}</td><td>${formatMoney(t.amount)}</td><td>${t.notes}</td></tr>`).join('')}</table><div style="margin-top: 30px; text-align: left; background:#f9f9f9; padding:20px; border:1px solid #ccc;"><p>إجمالي الأتعاب المتفق عليها: <strong>${formatMoney(currentCaseData.financials.totalAgreed)}</strong></p><p>إجمالي ما تم سداده: <strong>${formatMoney(currentCaseData.financials.totalPaid)}</strong></p><p style="color:red;">إجمالي المصروفات القضائية: <strong>${formatMoney(currentCaseData.financials.totalExpenses)}</strong></p><hr><h3 style="color:#152238; background:none; padding:0; margin:10px 0 0 0;">صافي الربح للمكتب: ${formatMoney(currentCaseData.financials.netProfit)}</h3></div></body></html>`;
+            printWindow.document.write(html);
+            printWindow.document.close();
+            setTimeout(function() { printWindow.print(); }, 500);
+        }
+        
+        // كود تشغيل الـ Service Worker عشان الموبايل
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker Registered!', reg))
+                .catch(err => console.error('Service Worker Failed!', err));
+            });
+        }
+    </script>
+</body>
+</html>
